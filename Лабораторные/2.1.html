@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 2.1</title>
+    <style>
+        main {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: auto;
+            background: linear-gradient(to right, #89CA6A, #509985);
+            background-color: #509985;
+            display: grid;
+        }
+
+        #switch {
+            vertical-align: middle;
+            display: table-cell;
+            color: #35567E;
+            font: 4em Helvetica;
+            text-shadow: #89CA6A 0 0 0.5rem;
+        }
+
+        #act-window {
+            justify-content: space-between;
+            box-sizing: border-box;
+            width: 60vw;
+            height: 70vh;
+            margin: auto;
+            padding: 2rem;
+            border: 1rem double #1E3F66;
+        }
+
+        #image-holder-1 {
+            height: 20rem;
+            width: 17rem;
+        }
+
+        #image-holder-2 {
+            margin-top: 3rem;
+            width: 17rem;
+            height: 20rem;
+        }
+
+        img {
+            border: 0.5rem double #1E3F66;
+        }
+
+        #dogs-and-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        #switch-button {
+            margin: auto;
+            width: auto;
+            height: 3rem;
+            color: #1E3F66;
+            background-color: #89CA6A;
+            border: 0.5rem double #1E3F66;
+            cursor: pointer;
+        }
+
+        #switch-button:active {
+            background-color: #85af72;
+            border: 0.5rem double #1E3F66;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div id='act-window'>
+            <span id='switch'>Поменять местами картинки</span>
+            <div id='dogs-and-button'>
+                <img id='image-holder-1' src='me.jpg' alt='default position to a big dog'></img>
+                <input id='switch-button' type='button' placeholder="Обменять" value='Обменять'>
+                <img id='image-holder-2' src='you.jpg' alt='default position to a smaller dog'></img>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.getElementById('switch-button').addEventListener('click', changeImg);
+
+        let delay = 0;
+        function changeImg() {
+            delay++;
+            if (delay >= 3) {
+                let chadDog = document.getElementById('image-holder-1');
+                let cheems = document.getElementById('image-holder-2');
+                let temp = chadDog.src;
+
+                chadDog.src = cheems.src;
+                cheems.src = temp;
+                delay = 0;
+            }
+        }
+    </script>
+</body>
+
+</html>

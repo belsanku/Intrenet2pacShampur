@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 2.2</title>
+    <style>
+        .red-btn {
+            background-color: #e53935;
+            color: white;
+            padding: 2px 7px;
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <img id='img' src="s1.gif">
+        <br>
+        <button id="faster">Быстрее</button>
+        <button id="slowly">Медленнее</button>
+        <button id="stop">Стоп</button>
+        <button id="start">Старт</button>
+        <br>
+        <span id="delayText"></span>
+        <br>
+        <span id="delayFPS"></span>
+    </section>
+    <script>
+        'use strict'
+
+        let img = document.getElementById('img');
+        let imgN = 1;
+        let delay = 83.3;
+        let fps = 12;
+        delay = 1000 / fps;
+
+        let animationTimer;
+
+        let stop = document.getElementById("stop");
+        let start = document.getElementById("start");
+        start.classList.toggle("red-btn");
+
+        document.getElementById("faster").addEventListener('click', () => { fps += 1; delay = 1000 / fps; });
+        document.getElementById("slowly").addEventListener('click', () => { fps > 0 ? fps -= 1 : fps = 0; delay = 1000 / fps; });
+        stop.addEventListener('click', () => { clearTimeout(animationTimer); animationTimer = 0; start.classList = "red-btn"; stop.classList = ""; });
+        start.addEventListener('click', () => { animationTimer ? null : animationTimer = setTimeout(nextFrame, delay); stop.classList = "red-btn"; start.classList = ""; });
+
+        function nextFrame() {
+            if (imgN >= 12) { imgN = 1; }
+            img.src = `s${imgN}.gif`;
+            imgN += 1;
+            document.getElementById('delayText').textContent = `Задержка(миллисекунд): ${delay.toFixed(2)}`;
+            document.getElementById('delayFPS').textContent = `FPS: ${(1000 / delay).toFixed(1)}`;
+            animationTimer = setTimeout(nextFrame, delay);
+        }
+
+    </script>
+</body>
+
+</html>

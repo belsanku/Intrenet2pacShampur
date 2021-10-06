@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 3.2</title>
+    <style>
+        html {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        form {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            height: 16rem;
+            width: 30rem;
+            padding: 2rem;
+            justify-content: space-evenly;
+        }
+
+        #title {
+            font-size: 2.5rem;
+        }
+
+        #submit,
+        #clear {
+            width: 10rem;
+        }
+
+        #counter,
+        #last-time,
+        #user {
+            padding-left: 0.5rem;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="cookie">
+        <form>
+            <span id="title">COOKIE</span>
+            <span id="hello">Привет,<span id="user"></span>!</span>
+            <span class="new-user">Количество посещений этой страницы:<span id="counter"></span></span>
+            <span class="new-user">Вы были на этой странице:<span id="last-time"></span></span>
+            <label for="name">Введите имя:
+                <input type="text" name="name" id="name">
+            </label>
+            <input type="button" id="submit" value="Зарегистрироваться">
+            <input type="button" id="clear" class="new-user" value="Обнулить посещения">
+        </form>
+    </section>
+    <script>
+        let user = document.getElementById('user');
+        let counter = document.getElementById('counter');
+        let lastTime = document.getElementById('last-time');
+        let enterCounter = 0;
+
+        let today = new Date();
+        let expires = new Date();
+        expires.setTime(today.getTime() + 1000 * 60 * 60 * 24 * 365);
+
+        let submit = document.getElementById('submit');
+        submit.addEventListener('click', setUser);
+
+        let clear = document.getElementById('clear');
+        clear.addEventListener('click', () => { setCookie("userCounter", 1, expires); counter.textContent = 0 });
+
+        if (getCookie("lastUser") == undefined) {
+            Array.from(document.getElementsByClassName('new-user')).forEach(el => {
+                el.classList = 'hide';
+            });
+            user.textContent = "Аноним. Добро пожаловать на сайт впервые!";
+        } else {
+            let pastTime = Math.floor(Date.now() / 1000) - parseInt(getCookie("userLastTime")) > 0 ? Math.floor(Date.now() / 1000) - parseInt(getCookie("userLastTime")) : 0;
+
+            let pastHours = Math.floor(pastTime / 60 / 60);
+            let pastMinutes = Math.floor(pastTime / 60) - (pastHours * 60);
+            let pastSeconds = pastTime % 60;
+
+            user.textContent = getCookie("lastUser");
+            counter.textContent = getCookie("userCounter");
+            lastTime.textContent = pastHours + " часов, " + pastMinutes + " минут, " + pastSeconds + " секунд назад";
+
+            setCookie("userCounter", parseInt(counter.textContent) + 1, expires);
+            setCookie("userLastTime", Math.floor(Date.now() / 1000), expires);
+        }
+
+        function setUser() {
+            setCookie("lastUser", document.getElementById('name').value, expires);
+            if (getCookie("userCounter") == undefined) {
+                setCookie("userCounter", 1, expires);
+            }
+            setCookie("userLastTime", Date.now(), expires);
+            window.location.href = window.location.href
+        }
+
+        function CookiesDelete() {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                var eqPos = cookie.indexOf("=");
+                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+                document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            }
+        }
+
+        function setCookie(name, value, expire) {
+            document.cookie = name + "=" + escape(value) +
+                //В строку дописывается имя устанавливаемой cookie
+                ((expire == null) ? "" : ("; expires=" + expire.toGMTString()))
+            //Устанавливается время действия
+        }
+
+        function getCookie(Name) {
+            var search = Name + "="
+            //Создается строка для поиска в document.cookie
+            if (document.cookie.length > 0) {
+                offset = document.cookie.indexOf(search)
+                //Поиск cookie по ее имени
+                if (offset != -1) {
+                    offset += search.length
+                    end = document.cookie.indexOf(";", offset)
+                    //Определили положение нужной cookie, и по индексам вырежем ее
+                    if (end == -1)
+                        end = document.cookie.length
+                    return unescape(document.cookie.substring(offset, end))
+                    //Вернули подстроку, содержащюю нужное значение cookie
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

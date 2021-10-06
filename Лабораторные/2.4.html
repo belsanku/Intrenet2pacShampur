@@ -1,0 +1,163 @@
+<html>
+
+<head>
+    <title> Images view </title>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .digit {
+            min-width: 16px;
+            height: 21px;
+        }
+
+        .dateSet {
+            display: flex;
+            flex-direction: row;
+            box-sizing: border-box;
+            height: fit-content;
+        }
+
+        #dateText {
+            font-weight: bold;
+            margin: 0 20px;
+        }
+    </style>
+</head>
+
+<body onload='setDigits()'>
+    <div id='hours' class='dateSet'>
+        <img id='hoursFirst' class='digit' src='dg0.gif'>
+        <img id='hoursSecond' class='digit' src='dg0.gif'>
+    </div>
+
+    <img class='dotts digit' src='dgc.gif'>
+
+    <div id='minutes' class='dateSet'>
+        <img id='minutesFirst' class='digit' src='dg0.gif'>
+        <img id='minutesSecond' class='digit' src='dg0.gif'>
+    </div>
+
+    <img class='dotts digit' src='dgc.gif'>
+
+    <div id='seconds' class='dateSet'>
+        <img id='secondsFirst' class='digit' src='dg0.gif'>
+        <img id='secondsSecond' class='digit' src='dg0.gif'>
+    </div>
+
+    <img id='ampm' class='digit' src='dgam.gif'>
+
+    <div id='date' class='dateSet'>
+        <span id='dateText'>Дата:</span>
+
+        <div id='days' class='dateSet'>
+            <img id='daysFirst' class='digit' src='dg0.gif'>
+            <img id='daysSecond' class='digit' src='dg0.gif'>
+        </div>
+
+        <img class='dotts digit' src='dgc.gif'>
+
+        <div id='months' class='dateSet'>
+            <img id='monthsFirst' class='digit' src='dg0.gif'>
+            <img id='monthsSecond' class='digit' src='dg0.gif'>
+        </div>
+
+        <img class='dotts digit' src='dgc.gif'>
+
+        <div id='years' class='dateSet'>
+            <img id='yearsFirst' class='digit' src='dg0.gif'>
+            <img id='yearsSecond' class='digit' src='dg0.gif'>
+            <img id='yearsThird' class='digit' src='dg0.gif'>
+            <img id='yearsFourth' class='digit' src='dg0.gif'>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    let isChanged = false;
+    let documentPath = (location.href).substring(0, (location.href).lastIndexOf("/") + 1);
+    let currentTime = new Date();
+    let hour = currentTime.getHours();
+    let minute = currentTime.getMinutes();
+    let second = currentTime.getSeconds();
+    let day = currentTime.getDate();
+    let month = currentTime.getMonth();
+    let year = currentTime.getFullYear();
+    let isPostMeridiem = true;
+    document.getElementById('date').addEventListener('click', reverceData);
+    let timeArr = [
+        document.getElementById('hoursFirst'),
+        document.getElementById('hoursSecond'),
+        document.getElementById('minutesFirst'),
+        document.getElementById('minutesSecond'),
+        document.getElementById('secondsFirst'),
+        document.getElementById('secondsSecond'),
+        document.getElementById('ampm')
+    ];
+    let dateArr = [
+        document.getElementById('daysFirst'),
+        document.getElementById('daysSecond'),
+        document.getElementById('monthsFirst'),
+        document.getElementById('monthsSecond'),
+        document.getElementById('yearsFirst'),
+        document.getElementById('yearsSecond'),
+        document.getElementById('yearsThird'),
+        document.getElementById('yearsFourth')
+    ];
+
+    function setDigits() {
+        getTime();
+
+        timeArr[0].src = "dg" + Math.floor(hour / 10) + ".gif";
+        timeArr[1].src = "dg" + hour % 10 + ".gif";
+        timeArr[2].src = "dg" + Math.floor(minute / 10) + ".gif";
+        timeArr[3].src = "dg" + minute % 10 + ".gif";
+        timeArr[4].src = "dg" + Math.floor(second / 10) + ".gif";
+        timeArr[5].src = "dg" + second % 10 + ".gif";
+        timeArr[6].src = "dg" + (isPostMeridiem ? 'pm' : 'am') + ".gif";
+
+        dateArr[0].src = "dg" + Math.floor(day / 10) + ".gif";
+        dateArr[1].src = "dg" + day % 10 + ".gif";
+        dateArr[2].src = "dg" + Math.floor(month / 10) + ".gif";
+        dateArr[3].src = "dg" + month % 10 + ".gif";
+        dateArr[4].src = "dg" + Math.floor(year / 1000) + ".gif";
+        dateArr[5].src = "dg" + Math.floor((year % 1000) / 100) + ".gif";
+        dateArr[6].src = "dg" + Math.floor(((year % 1000) % 100) / 10) + ".gif";
+        dateArr[7].src = "dg" + year % 10 + ".gif";
+
+        setTimeout(setDigits, 1000);
+    }
+
+    function getTime() {
+        currentTime = new Date();
+        currentTime = currentTime.getTime();
+        currentTime -= (isChanged ? (new Date(3600 * 24 * 1000)).getTime() : 0);
+        currentTime = new Date(currentTime);
+
+        hour = currentTime.getHours();
+        minute = currentTime.getMinutes();
+        second = currentTime.getSeconds();
+        day = currentTime.getDate();
+        month = currentTime.getMonth() + 1;
+        year = currentTime.getFullYear();
+
+        if (hour > 12) {
+            hour -= 12;
+            isPostMeridiem = true;
+        } else
+            isPostMeridiem = false;
+        if (!hour)
+            hour = 12;
+    }
+
+    function reverceData() {
+        isChanged = !isChanged;
+        setDigits();
+    }
+</script>
+
+</html>

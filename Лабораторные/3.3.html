@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 3.3</title>
+
+    <style>
+        html {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 20px;
+        }
+
+        #faculty {
+            min-width: 2.2rem;
+        }
+
+        #course {
+            min-width: 2rem;
+        }
+
+        #group {
+            min-width: 3.5rem;
+        }
+
+        #student-name {
+            min-width: 9rem;
+        }
+
+        table,
+        td,
+        th {
+            font-weight: normal;
+            border: 1px solid lightgray;
+            text-align: left;
+        }
+
+        td,
+        th {
+            border-top-color: gray;
+            border-left-color: gray;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        .subjects {
+            padding-right: 0.7rem;
+        }
+
+        .marks {
+            width: 1.35rem;
+            text-align: center;
+        }
+
+        #main {
+            margin: 2.5rem auto;
+        }
+
+        #avarage-score {
+            margin-top: 4rem;
+            display: block;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 0;
+            padding: 0.5rem;
+        }
+
+        input {
+            font-family: inherit;
+            font-size: inherit;
+        }
+    </style>
+
+</head>
+
+<body>
+    <section id='header'>
+        <span>Факультет: <select id='faculty'></select> Курс: <select id='course'></select> Группа: <select id='group'></select> ФИО: <select id='student-name'></select></span>
+    </section>
+    <section id='main'>
+        <table id='main-table'>
+        </table>
+        <span id='avarage-score'>Средний балл за контрольный срок составляет: <span id='avarage-score-value'></span><span id='credit'></span></span>
+        <br>
+        <input type="button" id="calculate" value="Выполнить">
+        <br><br>
+        <input type="button" id="cancel" value="Отменить">
+    </section>
+</body>
+
+<script>
+    'use strict'
+
+    let sibsutis = {
+        "ИВТ": {
+            "ИВ-922": {},
+            "ИВ-923": {},
+            "ИП-911": {},
+            "ИП-912": {
+                course: 2,
+                students: {
+                    "sex": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "relationship": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "with": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "goat": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "very": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "bad": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "so": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "I": [2, 2, 1, 2, 2, 2, 2, 2],
+                    "prefer": [2, 2, 1, 2, 0, 2, 1, 2], //y
+                    "to": [2, 2, 2, 2, 1, 2, 2, 2],
+                    "fuck": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "cockonut": [2, 2, 1, 2, 2, 2, 2, 2],
+                    "Ass": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "Hole": [2, 2, 2, 1, 2, 2, 2, 2],
+                    "Zhopniy": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "Dirka": [2, 2, 2, 2, 2, 2, 2, 2],
+                    "WHO": [1, 2, 2, 2, 2, 2, 2, 2],
+                    "ME": [2, 2, 2, 2, 1, 2, 2, 2],
+                    "MAYBE YOU": [1, 1, 1, 1, 1, 1, 1, 1],
+                    "NO YOU": [2, 1, 2, 2, 1, 2, 2, 2],
+                    "have aniceday ": [2, 2, 2, 2, 2, 2, 2, 2],
+                },
+                subjects: ["Объектно Ориентированное Программирование", "СиАОД", "Матанализ", "Матлог", "Интернет-технологии", "Лёгкая атлетика", "Иностранный язык", "ЭЭС"]
+            },
+            "ИП-913": {},
+            "ИП-914": {},
+            "ИП-915": {},
+            "ИП-916": {},
+            "ИП-917": {},
+        },
+    };
+    const courses = [1, 2, 3, 4];
+
+    function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    let isMan = true;
+
+    let surName = ["Смирнов", "Иванов", "Кузнецов", "Соколов", "Попов", "Лебедев", "Козлов", "Новиков", "Морозов", "Петров", "Волков", "Соловьёв", "Васильев", "Зайцев", "Павлов", "Семёнов", "Голубев", "Виноградов", "Богданов", "Воробьёв", "Фёдоров", "Михайлов", "Беляев", "Тарасов", "Белов", "Комаров", "Орлов", "Киселёв", "Макаров", "Андреев", "Ковалёв", "Ильин", "Гусев", "Титов", "Кузьмин", "Кудрявцев", "Баранов", "Куликов", "Алексеев", "Степанов", "Яковлев", "Сорокин", "Сергеев", "Романов", "Захаров", "Борисов", "Королёв", "Герасимов", "Пономарёв", "Григорьев", "Лазарев", "Медведев", "Ершов", "Никитин", "Соболев", "Рябов", "Поляков", "Цветков", "Данилов", "Жуков", "Фролов", "Журавлёв", "Николаев", "Крылов", "Максимов", "Сидоров", "Осипов", "Белоусов", "Федотов", "Дорофеев", "Егоров", "Матвеев", "Бобров", "Дмитриев", "Калинин", "Анисимов", "Петухов", "Антонов", "Тимофеев", "Никифоров", "Веселов", "Филиппов", "Марков", "Большаков", "Суханов", "Миронов", "Ширяев", "Александров", "Коновалов", "Шестаков", "Казаков", "Ефимов", "Денисов", "Громов", "Фомин", "Давыдов"];
+
+    let manFirstName = ["Александр", "Алексей", "Андрей", "Артем", "Виктор", "Даниил", "Дмитрий", "Егор", "Илья", "Кирилл", "Максим", "Марк", "Михаил", "Роман", "Степан", "Тимофей"];
+
+    let womanFirstName = ["Александра", "Алиса", "Анастасия", "Анна", "Валерия", "Вероника", "Виктория", "Дарья", "Ева", "Екатерина", "Елизавета", "Маргарита", "Мария", "Полина", "София", "Ульяна"];
+
+    document.addEventListener('DOMContentLoaded', function () {
+        for (let faculty in sibsutis) {
+            for (let groups in sibsutis[faculty]) {
+                if (groups != "ИП-912") {
+                    sibsutis[faculty][groups] = {};
+                    sibsutis[faculty][groups].course = courses[Math.floor(getRandomArbitrary(0, 4))];
+                    sibsutis[faculty][groups]["students"] = {};
+                    for (let i = 0; i < 24; i++) {
+                        let student = [];
+                        for (let j = 0; j < 8; j++) {
+                            if (i < 4) {
+                                student.push(Math.round(getRandomArbitrary(0, 1)));
+                            } else {
+                                student.push(Math.round(getRandomArbitrary(0, 3)));
+                            }
+                        }
+                        isMan = Math.round(Math.random());
+                        sibsutis[faculty][groups]["students"][surName[Math.round(getRandomArbitrary(0, surName.length - 1))] + (isMan ? "" : "а") + " " + (isMan ? manFirstName[Math.round(getRandomArbitrary(0, manFirstName.length - 1))] : womanFirstName[Math.round(getRandomArbitrary(0, manFirstName.length - 1))])] = student;
+                    }
+                    sibsutis[faculty][groups]["subjects"] = ["Объектно Ориентированное Программирование", "СиАОД", "Матанализ", "Матлог", "Интернет-технологии", "Лёгкая атлетика", "Иностранный язык", "ЭЭС"];
+                }
+            }
+        }
+        document.getElementById('group').dispatchEvent(new Event('change'));
+    });
+
+    for (let i of courses) {
+        let option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        document.getElementById('course').appendChild(option);
+    }
+
+    for (let faculty in sibsutis) {
+        let option = document.createElement('option');
+        option.value = faculty;
+        option.textContent = faculty;
+        document.getElementById('faculty').appendChild(option);
+        for (let group in sibsutis[faculty]) {
+            let option = document.createElement('option');
+            option.value = group;
+            option.textContent = group;
+            document.getElementById('group').appendChild(option);
+        }
+    }
+
+    let foundFaculty;
+    let elementValue;
+
+    let calculateBtn = document.getElementById('calculate');
+    let cancelBtn = document.getElementById('cancel');
+    calculateBtn.addEventListener('click', avgCalculate);
+    cancelBtn.addEventListener('click', avgCancel);
+    calculateBtn.disabled = true;
+    cancelBtn.disabled = true;
+
+    document.getElementById('course').addEventListener('change', function () {
+        while (document.getElementById('faculty').firstChild) {
+            document.getElementById('faculty').firstChild.remove();
+        }
+        while (document.getElementById('group').firstChild) {
+            document.getElementById('group').firstChild.remove();
+        }
+        while (document.getElementById('student-name').firstChild) {
+            document.getElementById('student-name').firstChild.remove();
+        }
+        for (let faculty in sibsutis) {
+            let isFaculty = false;
+            for (let group in sibsutis[faculty]) {
+                if (sibsutis[faculty][group].course == document.getElementById('course').value) {
+                    isFaculty = true;
+                }
+            }
+            let option = document.createElement('option');
+            option.value = faculty;
+            option.textContent = faculty;
+            document.getElementById('faculty').appendChild(option);
+
+            let isGroupsExist = false;
+            for (let group in sibsutis[faculty]) {
+                if (sibsutis[faculty][group].course == document.getElementById('course').value) {
+                    isGroupsExist = true;
+                    let option = document.createElement('option');
+                    option.value = group;
+                    option.textContent = group;
+                    document.getElementById('group').appendChild(option);
+                }
+            }
+            isGroupsExist ? document.getElementById('group').dispatchEvent(new Event('change')) : clearTable();
+        }
+    });
+
+    document.getElementById('group').addEventListener('change', function () {
+        calculateBtn.disabled = false;
+        cancelBtn.disabled = false;
+
+        elementValue = this.value;
+        for (let faculty in sibsutis) {
+            for (let group in sibsutis[faculty]) {
+                if (group == elementValue) {
+                    foundFaculty = faculty;
+                }
+            }
+        }
+
+        document.getElementById('faculty').value = foundFaculty;
+
+        document.getElementById('course').value = sibsutis[foundFaculty][this.value]['course'];
+
+        while (document.getElementById('student-name').firstChild) {
+            document.getElementById('student-name').firstChild.remove();
+        }
+        let first = true;
+        for (let student in sibsutis[foundFaculty][elementValue]['students']) {
+            let option = document.createElement('option');
+            option.value = student;
+            option.textContent = student;
+            document.getElementById('student-name').appendChild(option);
+        }
+        loadStudent();
+    });
+
+
+    clearTable();
+    function clearTable() {
+        while (document.getElementById('main-table').firstChild) {
+            document.getElementById('main-table').firstChild.remove();
+        }
+
+        document.getElementById('main-table').innerHTML = "<tr><th class='subjects'>Предмет</th><th class='marks'>0</th><th class='marks'>1</th><th class='marks'>2</th></tr>";
+        for (let placehoder = 0; placehoder < 5; placehoder += 1) {
+            let tr = document.createElement('tr');
+            let subjectTD = document.createElement('td');
+            let markOne = document.createElement('td');
+            let markOneInput = document.createElement('input');
+            let markTwo = document.createElement('td');
+            let markTwoInput = document.createElement('input');
+            let markThree = document.createElement('td');
+            let markThreeInput = document.createElement('input');
+
+            subjectTD.classList = 'Выберите студента для обновления таблицы';
+            markOneInput.classList = 'marks';
+            markTwoInput.classList = 'marks';
+            markThreeInput.classList = 'marks';
+
+            subjectTD.textContent = "Выберите студента для обновления таблицы";
+            markOneInput.name = "subject";
+            markTwoInput.name = "subject";
+            markThreeInput.name = "subject";
+
+            markOneInput.type = 'radio';
+            markTwoInput.type = 'radio';
+            markThreeInput.type = 'radio';
+
+            tr.appendChild(subjectTD);
+            markOne.appendChild(markOneInput);
+            tr.appendChild(markOne);
+            markTwo.appendChild(markTwoInput);
+            tr.appendChild(markTwo);
+            markThree.appendChild(markThreeInput);
+            tr.appendChild(markThree);
+
+            document.getElementById('main-table').appendChild(tr);
+        }
+    }
+
+
+    let avgScore = 0;
+    document.getElementById('student-name').addEventListener('change', loadStudent);
+
+    function loadStudent(firstStudent = null) {
+        avgScore = 0;
+        while (document.getElementById('main-table').firstChild) {
+            document.getElementById('main-table').firstChild.remove();
+        }
+        document.getElementById('main-table').innerHTML = "<tr><th class='subjects'>Предмет</th><th class='marks'>0</th><th class='marks'>1</th><th class='marks'>2</th></tr>";
+        for (let subject of sibsutis[foundFaculty][elementValue]['subjects']) {
+            let tr = document.createElement('tr');
+            let subjectTD = document.createElement('td');
+            let markOne = document.createElement('td');
+            let markOneInput = document.createElement('input');
+            let markTwo = document.createElement('td');
+            let markTwoInput = document.createElement('input');
+            let markThree = document.createElement('td');
+            let markThreeInput = document.createElement('input');
+
+            subjectTD.classList = 'subjects';
+            markOneInput.classList = 'marks';
+            markTwoInput.classList = 'marks';
+            markThreeInput.classList = 'marks';
+
+            subjectTD.textContent = subject;
+            markOneInput.name = subject;
+            markTwoInput.name = subject;
+            markThreeInput.name = subject;
+
+            markOneInput.type = 'radio';
+            markTwoInput.type = 'radio';
+            markThreeInput.type = 'radio';
+
+            let markIndex;
+            for (let index in sibsutis[foundFaculty][elementValue]['subjects']) {
+                if (sibsutis[foundFaculty][elementValue]['subjects'][index] == subject) {
+                    markIndex = index;
+                }
+            }
+            if (sibsutis[foundFaculty][elementValue]['students'][document.getElementById('student-name').value][markIndex] == 0) {
+                markOneInput.checked = true;
+            } else if (sibsutis[foundFaculty][elementValue]['students'][document.getElementById('student-name').value][markIndex] == 1) {
+                markTwoInput.checked = true;
+                avgScore += 1;
+            } else {
+                avgScore += 2;
+                markThreeInput.checked = true;
+            }
+
+            tr.appendChild(subjectTD);
+            markOne.appendChild(markOneInput);
+            tr.appendChild(markOne);
+            markTwo.appendChild(markTwoInput);
+            tr.appendChild(markTwo);
+            markThree.appendChild(markThreeInput);
+            tr.appendChild(markThree);
+
+            document.getElementById('main-table').appendChild(tr);
+        }
+    }
+
+    function avgCalculate() {
+        let avgScoreCalculated = avgScore / sibsutis[foundFaculty][elementValue]['subjects'].length;
+        document.getElementById('avarage-score-value').textContent = String(avgScoreCalculated.toFixed(1));
+        let credit = "Зачёт!";
+        avgScoreCalculated >= 1 ? credit = "Зачёт!" : credit = "Незачёт!";
+        document.getElementById('credit').textContent = " ".repeat((20 - credit.length - 1)) + credit;
+    }
+
+    function avgCancel() {
+        document.getElementById('avarage-score-value').textContent = "";
+    }
+</script>
+
+</html>
